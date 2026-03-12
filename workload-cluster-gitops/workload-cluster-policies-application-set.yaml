@@ -24,7 +24,6 @@ spec:
         - path: workload-cluster-policies
           repoURL: https://github.com/troy-adianto/ocp-ztp-gitops.git
           targetRevision: main
-          repositoryType: git
       syncPolicy:
         automated:
           prune: true
