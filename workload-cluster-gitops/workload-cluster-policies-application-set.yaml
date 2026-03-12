@@ -47,3 +47,5 @@ spec:
               operator: In
               values:
                 - local-cluster
+  clusterSets:
+    - default
