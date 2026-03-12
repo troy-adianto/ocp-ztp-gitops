@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - namespaces
+  - compliance-operator
 
 commonLabels:
   managed-by: argocd
