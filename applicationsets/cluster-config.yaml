@@ -15,6 +15,9 @@ spec:
           - cluster: cluster-prod
             url: https://api.prod.example.com:6443
             environment: production
+          - cluster: ocpcluster1
+            url: https://api.ocpcluster1.example.com:6443
+            environment: production
   template:
     metadata:
       name: '{{ .cluster }}-config'
