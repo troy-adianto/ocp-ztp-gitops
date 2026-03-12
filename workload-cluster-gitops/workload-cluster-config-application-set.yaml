@@ -1,42 +1,45 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: workload-cluster-config
+  name: default-workload-cluster-configuration
   namespace: openshift-gitops
 spec:
-  goTemplate: true
-  goTemplateOptions: ["missingkey=error"]
   generators:
-    - clusters:
-        selector:
+    - clusterDecisionResource:
+        configMapRef: acm-placement
+        labelSelector:
           matchLabels:
-            gitops-managed: "true"
-        values:
-          environment: '{{ index .metadata.labels "environment" }}'
+            cluster.open-cluster-management.io/placement: default-workload-cluster-configuration-placement
+        requeueAfterSeconds: 30
   template:
     metadata:
-      name: '{{ .name }}-config'
+      name: default-workload-cluster-configuration-{{name}}
       labels:
-        cluster: '{{ .name }}'
-        environment: '{{ .values.environment }}'
+        velero.io/exclude-from-backup: "true"
     spec:
-      project: default
-      source:
-        repoURL: https://github.com/troy-adianto/ocp-ztp-gitops.git
-        targetRevision: main
-        path: workload-cluster-config/overlays/{{ .name }}
       destination:
-        server: '{{ .server }}'
+        namespace: default-workload-cluster-config
+        server: "{{server}}"
+      project: default
+      sources:
+        - path: workload-cluster-config/overlays/{{name}}
+          repoURL: https://github.com/troy-adianto/ocp-ztp-gitops.git
+          targetRevision: main
+          repositoryType: git
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-          - ServerSideApply=true
-        retry:
-          limit: 5
-          backoff:
-            duration: 5s
-            factor: 2
-            maxDuration: 3m
+          - PruneLast=true
+          
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: default-workload-cluster-configuration-placement
+  namespace: openshift-gitops
+spec:
+  clusterSets:
+    - workload
