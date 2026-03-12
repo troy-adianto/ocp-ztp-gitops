@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - namespaces
-  - project-templates
 
 commonLabels:
   managed-by: argocd
