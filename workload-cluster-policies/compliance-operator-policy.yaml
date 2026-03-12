@@ -46,14 +46,6 @@ spec:
             namespace: openshift-compliance
             source: redhat-operators
             sourceNamespace: openshift-marketplace
-            config: '{{ if and (eq "ROSA" (lookup
-              "cluster.open-cluster-management.io/v1alpha1" "ClusterClaim" ""
-              "product.open-cluster-management.io").spec.value) (eq "true"
-              (lookup "cluster.open-cluster-management.io/v1alpha1"
-              "ClusterClaim" ""
-              "hostedcluster.hypershift.openshift.io").spec.value)
-              }}{"nodeSelector":{"node-role.kubernetes.io/worker":""} }{{ else
-              }}{{ "{}" | toLiteral }}{{ end }}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
