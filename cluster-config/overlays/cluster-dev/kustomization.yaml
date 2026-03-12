@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namePrefix: ""
+nameSuffix: ""
+
+commonLabels:
+  cluster: cluster-dev
+  environment: development
+
+patches:
+  - target:
+      kind: ResourceQuota
+      name: example-app-quota
+    patch: |-
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "2"
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: 4Gi
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "4"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: 8Gi
+      - op: replace
+        path: /spec/hard/pods
+        value: "10"

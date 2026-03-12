@@ -1,0 +1,23 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets (never commit these)
+**/secrets/
+*.key
+*.pem
+*.crt
+
+# Kustomize build output
+output/
+rendered/
+
+# Temporary files
+*.tmp
+*.bak

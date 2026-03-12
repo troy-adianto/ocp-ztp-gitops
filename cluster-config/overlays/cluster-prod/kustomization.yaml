@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namePrefix: ""
+nameSuffix: ""
+
+commonLabels:
+  cluster: cluster-prod
+  environment: production
+
+patches:
+  - target:
+      kind: ResourceQuota
+      name: example-app-quota
+    patch: |-
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "8"
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: 16Gi
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "16"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: 32Gi
+      - op: replace
+        path: /spec/hard/pods
+        value: "50"
+
+  - target:
+      kind: LimitRange
+      name: example-app-limits
+    patch: |-
+      - op: replace
+        path: /spec/limits/0/default/cpu
+        value: "1"
+      - op: replace
+        path: /spec/limits/0/default/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/limits/0/max/cpu
+        value: "4"
+      - op: replace
+        path: /spec/limits/0/max/memory
+        value: 8Gi
