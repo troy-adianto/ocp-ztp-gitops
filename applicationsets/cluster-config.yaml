@@ -7,31 +7,26 @@ spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   generators:
-    - list:
-        elements:
-          - cluster: cluster-dev
-            url: https://api.dev.example.com:6443
-            environment: development
-          - cluster: cluster-prod
-            url: https://api.prod.example.com:6443
-            environment: production
-          - cluster: ocpcluster1
-            url: https://api.ocpcluster1.example.com:6443
-            environment: production
+    - clusters:
+        selector:
+          matchLabels:
+            gitops-managed: "true"
+        values:
+          environment: '{{ index .metadata.labels "environment" }}'
   template:
     metadata:
-      name: '{{ .cluster }}-config'
+      name: '{{ .name }}-config'
       labels:
-        cluster: '{{ .cluster }}'
-        environment: '{{ .environment }}'
+        cluster: '{{ .name }}'
+        environment: '{{ .values.environment }}'
     spec:
       project: default
       source:
         repoURL: https://github.com/troy-adianto/ocp-ztp-gitops.git
         targetRevision: main
-        path: cluster-config/overlays/{{ .cluster }}
+        path: cluster-config/overlays/{{ .name }}
       destination:
-        server: '{{ .url }}'
+        server: '{{ .server }}'
       syncPolicy:
         automated:
           prune: true
