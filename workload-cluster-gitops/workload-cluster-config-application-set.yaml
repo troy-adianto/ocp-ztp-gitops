@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: workload-cluster-config
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            gitops-managed: "true"
+        values:
+          environment: '{{ index .metadata.labels "environment" }}'
+  template:
+    metadata:
+      name: '{{ .name }}-config'
+      labels:
+        cluster: '{{ .name }}'
+        environment: '{{ .values.environment }}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/troy-adianto/ocp-ztp-gitops.git
+        targetRevision: main
+        path: workload-cluster-config/overlays/{{ .name }}
+      destination:
+        server: '{{ .server }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
