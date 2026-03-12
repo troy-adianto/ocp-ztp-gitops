@@ -25,7 +25,6 @@ spec:
         - path: workload-cluster-config/overlays/{{name}}
           repoURL: https://github.com/troy-adianto/ocp-ztp-gitops.git
           targetRevision: main
-          repositoryType: git
       syncPolicy:
         automated:
           prune: true
